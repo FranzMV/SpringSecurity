@@ -14,3 +14,8 @@ spring:
         user:
             name: fran
             password: 1234
+        jwt:
+            key:
+                private: 2dd57dfe27e671d7fad1d9517900518607dfb1d0a4718105b2e69986349d0a83
+            user:
+                generator: AUTHJWT-BACKEND
