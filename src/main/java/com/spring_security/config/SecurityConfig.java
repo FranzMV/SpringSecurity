@@ -1,5 +1,6 @@
 package com.spring_security.config;
 
+import com.spring_security.service.UserDetailServiceImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -39,9 +40,10 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(http -> {
                     //Configurar los endPoints publicos
-                    http.requestMatchers(HttpMethod.GET, "/auth/hello").permitAll();
+                    http.requestMatchers(HttpMethod.GET, "/auth/get").permitAll();
                     //Configurar los endPoints privados
-                    http.requestMatchers(HttpMethod.GET, "/auth/hello-secured").hasAnyAuthority("CREATE");
+                    http.requestMatchers(HttpMethod.POST, "/auth/post").hasAnyRole("ADMIN","DEVELOPER");
+                    http.requestMatchers(HttpMethod.PATCH, "/auth/patch").hasAnyAuthority("REFACTOR");
                     //Configurar resto de endPoints no especificados
                     http.anyRequest()
                             .denyAll();//No dejara pasar a nadie que no sea cualquiera de los especificados arriba
@@ -50,6 +52,8 @@ public class SecurityConfig {
                 .build();
 
     }
+
+
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
@@ -62,37 +66,15 @@ public class SecurityConfig {
      * @return AuthenticationProvider provider
      */
     @Bean
-    public AuthenticationProvider authenticationProvider(){
+    public AuthenticationProvider authenticationProvider(UserDetailServiceImpl userDetailService){
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
         provider.setPasswordEncoder(passwordEncoder());
-        provider.setUserDetailsService(userDetailsService());
+        provider.setUserDetailsService(userDetailService);
         return provider;
     }
 
 
-    /**
-     * Simula los usuarios recogidos de la base de datos
-     * @return List<UserDetailsService> userDetailServiceList
-     */
-    @Bean
-    public UserDetailsService userDetailsService(){
-        List<UserDetails> userDetailsList = new ArrayList<>();
 
-        userDetailsList.add(User
-                .withUsername("fran")
-                .password("1234")
-                .roles("ADMIN")
-                .authorities("READ","CREATE")
-                .build());
-        userDetailsList.add(User
-                .withUsername("daniel")
-                .password("1234")
-                .roles("USER")
-                .authorities("READ")
-                .build());
-
-        return new InMemoryUserDetailsManager(userDetailsList);
-    }
 
     @Bean
     public PasswordEncoder passwordEncoder(){
