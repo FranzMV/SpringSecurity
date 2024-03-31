@@ -1,0 +1,16 @@
+spring:
+    application:
+        name: SpringSecurity
+    datasource:
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        password: Password123#@!
+        url: jdbc:mysql://localhost:3306/spring_security6
+        username: root
+    jpa:
+        hibernate:
+            ddl-auto: create-drop
+        show-sql: true
+    security:
+        user:
+            name: fran
+            password: 1234
