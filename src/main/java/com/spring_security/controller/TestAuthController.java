@@ -1,33 +1,33 @@
 package com.spring_security.controller;
 
-import org.springframework.security.access.prepost.PreAuthorize;
+import com.spring_security.constants.SecurityConstants;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping(SecurityConstants.AUTH_PATH)
 public class TestAuthController {
 
-    @GetMapping("/get")
+    @GetMapping(SecurityConstants.GET_PATH)
     public String helloGet(){
         return "Hello World - GET";
     }
 
-    @PostMapping("/post")
+    @PostMapping(SecurityConstants.POST_PATH)
     public String helloPost(){
         return "Hello World - POST";
     }
 
-    @PutMapping("/put")
+    @PutMapping(SecurityConstants.PUT_PATH)
     public String helloPut(){
         return "Hello World - PUT";
     }
 
-    @DeleteMapping("/delete")
+    @DeleteMapping(SecurityConstants.DELETE_PATH)
     public String helloDelete(){
         return "Hello World - DELETE";
     }
 
-    @PatchMapping("/patch")
+    @PatchMapping(SecurityConstants.PATCH_PATH)
     public String helloPatch() {
         return "Hello World - PATCH";
     }

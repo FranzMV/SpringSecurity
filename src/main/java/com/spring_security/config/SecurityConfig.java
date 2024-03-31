@@ -1,5 +1,6 @@
 package com.spring_security.config;
 
+import com.spring_security.constants.SecurityConstants;
 import com.spring_security.service.UserDetailServiceImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,8 +24,12 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableMethodSecurity
 public class SecurityConfig {
 
-
-
+    /**
+     * FilterChain
+     * @param httpSecurity httpSecurity
+     * @return SecurityFilterChain httpSecurity
+     * @throws Exception
+     */
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception{
         return httpSecurity
@@ -32,18 +37,23 @@ public class SecurityConfig {
                 .httpBasic(Customizer.withDefaults())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(http -> {
+
                     //Configurar los endPoints publicos
-                    http.requestMatchers(HttpMethod.GET, "/auth/get").permitAll();
+                    http.requestMatchers(HttpMethod.GET,SecurityConstants.GET_PATH).permitAll();
                     //Configurar los endPoints privados
-                    http.requestMatchers(HttpMethod.POST, "/auth/post").hasAnyRole("ADMIN","DEVELOPER");
-                    http.requestMatchers(HttpMethod.PATCH, "/auth/patch").hasAnyAuthority("REFACTOR");
+
+                    http.requestMatchers(HttpMethod.POST, SecurityConstants.POST_PATH)
+                            .hasAnyRole(SecurityConstants.ADMIN_ROLE,SecurityConstants.DEVELOPER_ROLE);
+
+                    http.requestMatchers(HttpMethod.PATCH,SecurityConstants.PATCH_PATH)
+                            .hasAnyAuthority(SecurityConstants.REFACTOR_ROLE);
+
                     //Configurar resto de endPoints no especificados
                     http.anyRequest()
                             .denyAll();//No dejara pasar a nadie que no sea cualquiera de los especificados arriba
                             //.authenticated(); Cualquier endPoint no especificado arriba, le dejara pasar
                 })
                 .build();
-
     }
 
 

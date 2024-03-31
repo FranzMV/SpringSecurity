@@ -1,5 +1,6 @@
 package com.spring_security.service;
 
+import com.spring_security.constants.SecurityConstants;
 import com.spring_security.persistence.entity.UserEntity;
 import com.spring_security.persistence.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,12 @@ public class UserDetailServiceImpl implements UserDetailsService {
     @Autowired
     private UserRepository userRepository;
 
+    /**
+     *
+     * @param username
+     * @return
+     * @throws UsernameNotFoundException
+     */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
@@ -29,7 +36,7 @@ public class UserDetailServiceImpl implements UserDetailsService {
 
         userEntity.getRoles()
                 .forEach(role -> authorityList.add
-                        (new SimpleGrantedAuthority("ROLE_".concat(role.getRoleEnum().name()))));
+                        (new SimpleGrantedAuthority(SecurityConstants.ROLE_.concat(role.getRoleEnum().name()))));
 
         userEntity.getRoles().stream()
                 .flatMap(role -> role.getPermissionEntitySet().stream())
