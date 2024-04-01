@@ -1,5 +1,6 @@
 package com.spring_security.controller;
 
+import com.spring_security.DTO.AuthCreateUserRequest;
 import com.spring_security.DTO.AuthLoginRequest;
 import com.spring_security.DTO.AuthResponse;
 import com.spring_security.constants.SecurityConstants;
@@ -20,6 +21,12 @@ public class AuthenticationController {
 
     @Autowired
     private UserDetailServiceImpl userDetailService;
+
+
+    @PostMapping(SecurityConstants.SIGN_UP_PATH)
+    public ResponseEntity<AuthResponse> register(@RequestBody @Valid AuthCreateUserRequest authCreateUser){
+        return new ResponseEntity<>(this.userDetailService.createUser(authCreateUser), HttpStatus.CREATED);
+    }
 
     @PostMapping(SecurityConstants.LOG_IN_PATH)
     public ResponseEntity<AuthResponse> login(@RequestBody @Valid AuthLoginRequest userRequest){
