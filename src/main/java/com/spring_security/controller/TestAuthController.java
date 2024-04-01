@@ -4,7 +4,7 @@ import com.spring_security.constants.SecurityConstants;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(SecurityConstants.AUTH_PATH)
+@RequestMapping(SecurityConstants.METHOD_PATH)
 public class TestAuthController {
 
     @GetMapping(SecurityConstants.GET_PATH)
