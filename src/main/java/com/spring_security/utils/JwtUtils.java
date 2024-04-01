@@ -20,10 +20,10 @@ import java.util.stream.Collectors;
 @Component
 public class JwtUtils {
 
-    @Value("${security.jwt.key.private}")
+    @Value("${spring.security.jwt.key.private}")
     private String privateKey;
 
-    @Value("${security.jwt.user.generator}")
+    @Value("${spring.security.jwt.user.generator}")
     private String userGenerator;
 
 
@@ -97,7 +97,7 @@ public class JwtUtils {
     /**
      * Devuelve todos los Claims
      * @param decodedJWT decodedJWT
-     * @return Map<String, Claim>
+     * @return Map<String, Claim> decodedJWT.getClaims()
      */
     public Map<String, Claim> returnAllClaims(DecodedJWT decodedJWT){
         return decodedJWT.getClaims();
