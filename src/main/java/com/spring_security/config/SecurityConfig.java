@@ -1,7 +1,10 @@
 package com.spring_security.config;
 
+import com.spring_security.config.filter.JwtTokenValidator;
 import com.spring_security.constants.SecurityConstants;
 import com.spring_security.service.UserDetailServiceImpl;
+import com.spring_security.utils.JwtUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -10,25 +13,27 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity
 public class SecurityConfig {
+
+    @Autowired
+    private JwtUtils jwtUtils;
 
     /**
      * FilterChain
      * @param httpSecurity httpSecurity
      * @return SecurityFilterChain httpSecurity
-     * @throws Exception
+     * @throws Exception exception
      */
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception{
@@ -39,20 +44,24 @@ public class SecurityConfig {
                 .authorizeHttpRequests(http -> {
 
                     //Configurar los endPoints publicos
-                    http.requestMatchers(HttpMethod.GET,SecurityConstants.GET_PATH).permitAll();
+                    http.requestMatchers(HttpMethod.POST,"/auth/**").permitAll();
                     //Configurar los endPoints privados
 
-                    http.requestMatchers(HttpMethod.POST, SecurityConstants.POST_PATH)
+                    http.requestMatchers(HttpMethod.POST, "/method/post")
                             .hasAnyRole(SecurityConstants.ADMIN_ROLE,SecurityConstants.DEVELOPER_ROLE);
 
-                    http.requestMatchers(HttpMethod.PATCH,SecurityConstants.PATCH_PATH)
-                            .hasAnyAuthority(SecurityConstants.REFACTOR_ROLE);
+                    http.requestMatchers(HttpMethod.PATCH,"/method/patch")
+                            .hasAnyAuthority("REFACTOR");
+
+                    http.requestMatchers(HttpMethod.GET,"/method/get")
+                            .hasAnyAuthority("CREATE");
 
                     //Configurar resto de endPoints no especificados
                     http.anyRequest()
                             .denyAll();//No dejara pasar a nadie que no sea cualquiera de los especificados arriba
                             //.authenticated(); Cualquier endPoint no especificado arriba, le dejara pasar
                 })
+                .addFilterBefore(new JwtTokenValidator(jwtUtils), BasicAuthenticationFilter.class)
                 .build();
     }
 
